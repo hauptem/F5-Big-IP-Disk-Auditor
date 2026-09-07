@@ -1,9 +1,6 @@
 # F5 BIG-IP Disk Audit
 
-![License](https://img.shields.io/badge/license-MIT-green)
-![TMOS Version](https://img.shields.io/badge/TMOS-13.x%20--%2017.x-red)
-
-Read-only disk space report for BIG-IP. Twelve checks covering partition and inode usage, boot volumes, largest files per volume, deleted files still held open, and removable ISO, EPSEC, UCS, qkview, core and pcap files. Each check cites the F5 article it is based on and shows the command it ran. Nothing is deleted or modified.
+Read-only disk space report for BIG-IP. Twelve checks covering partition and inode usage, boot volumes, largest files per volume, deleted files still held open, and removable ISO, EPSEC, UCS, qkview, core and pcap files. 
 
 ## Usage
 
