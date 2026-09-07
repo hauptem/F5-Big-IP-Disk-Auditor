@@ -1,4 +1,4 @@
-# F5 BIG-IP Disk Audit
+# F5 BIG-IP Disk Auditor
 
 Read-only disk space report for BIG-IP. Twelve checks covering partition and inode usage, boot volumes, largest files per volume, deleted files still held open, and removable ISO, EPSEC, UCS, qkview, core and pcap files. 
 
