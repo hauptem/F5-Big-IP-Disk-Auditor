@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F5 BIG-IP Disk Audit Report - sslo1.lab.local</title>
+<style>
+  :root { --pad:32px; --mono:Consolas,"Cascadia Mono",Menlo,"DejaVu Sans Mono","Liberation Mono","Courier New",monospace; }
+  html { scrollbar-gutter:stable; }
+  @supports not (scrollbar-gutter:stable) { html { overflow-y:scroll; } }
+  body { margin:0; background:#c4c3bf; color:#222; font:15px/1.5 "Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:1700px; margin:0 auto; padding:0 var(--pad); }
+  header { height:40px; color:#dce0e4; background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0) 0,rgba(255,255,255,.05) 2px,rgba(255,255,255,0) 4px),linear-gradient(#515b67,#768696); border-bottom:1px solid #5c5c5c; }
+  header .wrap { padding:7px 0 0 39px; }
+  h1 { margin:0; font-size:22px; font-weight:400; line-height:1.2; color:#dce0e4; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; }
+  .run { display:inline-flex; align-items:flex-end; gap:40px; margin:12px 0; padding:8px 14px; font-size:14px; background:#fff; border:1px solid #a8a5a0; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,.14); }
+  .run dl { display:grid; grid-template-columns:max-content 1fr; gap:0 14px; margin:0; }
+  .run dt { color:#444; } .run dd { margin:0; }
+  .toggles { margin:0; font-size:13px; }
+  .toggles a { cursor:pointer; margin-right:14px; }
+  details { margin:0 0 8px; background:#fff; border:1px solid #a8a5a0; border-radius:4px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.14); }
+  summary { padding:2px 12px; font-size:14.5px; line-height:1.35; font-weight:600; color:#fff; background:#5f6c7a; cursor:pointer; list-style:none; user-select:none; }
+  summary::-webkit-details-marker { display:none; }
+  summary::before { content:"\25BE"; display:inline-block; width:22px; font-size:20px; line-height:1; vertical-align:-2px; color:#ffd633; }
+  details:not([open]) summary::before { content:"\25B8"; }
+  table.meta { border-collapse:collapse; width:calc(100% - 24px); margin:6px 12px 8px; background:#f3f2f0; font-size:13.5px; }
+  table.meta th { text-align:left; vertical-align:top; color:#444; font-weight:normal; width:100px; padding:1px 12px; white-space:nowrap; }
+  table.meta td { padding:1px 12px 1px 0; font-size:13.5px; }
+  table.meta tr:first-child th, table.meta tr:first-child td { padding-top:4px; }
+  table.meta tr:last-child th, table.meta tr:last-child td { padding-bottom:4px; }
+  a { color:#2a4e73; }
+  code { font-family:var(--mono); font-size:13px; color:#333; white-space:pre; }
+  table.data { border-collapse:collapse; width:auto; margin:0 12px 8px; font-size:13.5px; font-family:var(--mono); }
+  table.data th { text-align:left; font-weight:600; padding:0 16px 0 0; border-bottom:1px solid #cfd6de; white-space:nowrap; color:#555; }
+  table.data td { padding:0 16px 0 0; vertical-align:top; white-space:nowrap; line-height:1.35; }
+  table.data td:last-child, table.data th:last-child { padding-right:0; }
+  table.data tbody tr:first-child td { padding-top:1px; }
+  table.data td:last-child { white-space:normal; overflow-wrap:anywhere; }
+  table.data td.num, table.data th.num { text-align:right; }
+  table.data tr.group td { padding-top:6px; font-weight:600; color:#333; }
+  table.data tr.empty td, p.empty { color:#222; }
+  p.empty { margin:0 12px 8px; font-family:var(--mono); font-size:13.5px; }
+  footer { margin:8px 0 16px; padding:6px 0; border-top:1px solid #a8a5a0; color:#222; font-size:13px; }
+  @media print { body { background:#fff; } .wrap { max-width:none; padding:0 8px; } details { break-inside:avoid; border-color:#999; box-shadow:none; } .run { box-shadow:none; } header, summary, table.meta { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>F5 BIG-IP Disk Audit Report</h1>
+</div></header>
+<div class="wrap">
+<div class="run">
+<dl>
+  <dt>Host:</dt><dd><a href="https://sslo1.lab.local/">sslo1.lab.local</a></dd>
+  <dt>Version:</dt><dd>17.5.1.9</dd>
+  <dt>Date:</dt><dd>2026-09-07 18:50:55 EDT</dd>
+</dl>
+<p class="toggles"><a onclick="document.querySelectorAll('details').forEach(d=>d.open=true)">Expand all</a><a onclick="document.querySelectorAll('details').forEach(d=>d.open=false)">Collapse all</a></p>
+</div>
+<main>
+<details id="check-1" open><summary>Check Partition free space</summary>
+<table class="meta">
+<tr><th>References:</th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th></th><td><a href="https://my.f5.com/manage/s/article/K23607394">The /usr partition shows high disk space usage (K23607394)</a></td></tr>
+<tr><th>Command:</th><td><code>df -hP</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th>Filesystem</th><th class="num">Size</th><th class="num">Used</th><th class="num">Avail</th><th class="num">Use%</th><th>Mounted on</th></tr></thead><tbody>
+<tr><td>/dev/mapper/vg--db--vda-set.2.root</td><td class="num">419M</td><td class="num">89M</td><td class="num">304M</td><td class="num">23%</td><td>/</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-set.2._config</td><td class="num">2.1G</td><td class="num">202M</td><td class="num">1.8G</td><td class="num">11%</td><td>/config</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-set.2._usr</td><td class="num">7.9G</td><td class="num">5.8G</td><td class="num">1.7G</td><td class="num">78%</td><td>/usr</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-set.2._var</td><td class="num">4.4G</td><td class="num">753M</td><td class="num">3.4G</td><td class="num">19%</td><td>/var</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-dat.share</td><td class="num">15G</td><td class="num">3.4G</td><td class="num">11G</td><td class="num">24%</td><td>/shared</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-dat.log</td><td class="num">2.9G</td><td class="num">127M</td><td class="num">2.6G</td><td class="num">5%</td><td>/var/log</td></tr>
+</tbody></table>
+</details>
+<details id="check-2" open><summary>Check Inode usage</summary>
+<table class="meta">
+<tr><th>Reference:</th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th>Commands:</th><td><code>df -iP</code></td></tr>
+<tr><th></th><td><code>find /var -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -nr | head -n 15</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th>Filesystem</th><th class="num">Inodes</th><th class="num">IUsed</th><th class="num">IFree</th><th class="num">IUse%</th><th>Mounted on</th></tr></thead><tbody>
+<tr><td>/dev/mapper/vg--db--vda-set.2.root</td><td class="num">112640</td><td class="num">4249</td><td class="num">108391</td><td class="num">4%</td><td>/</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-set.2._config</td><td class="num">142272</td><td class="num">957</td><td class="num">141315</td><td class="num">1%</td><td>/config</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-set.2._usr</td><td class="num">529360</td><td class="num">100402</td><td class="num">428958</td><td class="num">19%</td><td>/usr</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-set.2._var</td><td class="num">294912</td><td class="num">13863</td><td class="num">281049</td><td class="num">5%</td><td>/var</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-dat.share</td><td class="num">983040</td><td class="num">446</td><td class="num">982594</td><td class="num">1%</td><td>/shared</td></tr>
+<tr><td>/dev/mapper/vg--db--vda-dat.log</td><td class="num">192000</td><td class="num">428</td><td class="num">191572</td><td class="num">1%</td><td>/var/log</td></tr>
+</tbody></table>
+<table class="data">
+<thead><tr><th class="num">Files</th><th>Directory</th></tr></thead><tbody>
+<tr><td class="num">1084</td><td>/var/local/pgsql/data/base/23196</td></tr>
+<tr><td class="num">341</td><td>/var/ts/dms/help/tsui/en/policy</td></tr>
+<tr><td class="num">299</td><td>/var/local/pgsql/data/base/5</td></tr>
+<tr><td class="num">299</td><td>/var/local/pgsql/data/base/1</td></tr>
+<tr><td class="num">298</td><td>/var/local/pgsql/data/base/4</td></tr>
+<tr><td class="num">272</td><td>/var/sam/www/admin/vpe2/private/xml/help</td></tr>
+<tr><td class="num">250</td><td>/var/ts/dms/images/flags</td></tr>
+<tr><td class="num">168</td><td>/var/ts/dms/policy</td></tr>
+<tr><td class="num">164</td><td>/var/ts/dms/policy/templates</td></tr>
+<tr><td class="num">111</td><td>/var/sam/www/webtop/public/download</td></tr>
+<tr><td class="num">108</td><td>/var/ts/dms/images</td></tr>
+<tr><td class="num">104</td><td>/var/service</td></tr>
+<tr><td class="num">103</td><td>/var/ts/dms/policy/templates/angular/request/violations</td></tr>
+<tr><td class="num">95</td><td>/var/sam/www/admin/vpe2/private/xml/agentProperties</td></tr>
+<tr><td class="num">86</td><td>/var/ts/dms/skins/skin/images</td></tr>
+</tbody></table>
+</details>
+<details id="check-3" open><summary>Check Boot location volumes</summary>
+<table class="meta">
+<tr><th>Reference:</th><td><a href="https://my.f5.com/manage/s/article/K33265170">Deleting a boot location volume to free up disk space (K33265170)</a></td></tr>
+<tr><th>Command:</th><td><code>tmsh show sys software status</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th>Volume</th><th>Product</th><th class="num">Version</th><th class="num">Build</th><th>Active</th><th>Status</th></tr></thead><tbody>
+<tr><td>HD1.1</td><td>BIG-IP</td><td class="num">17.5.1.5</td><td class="num">0.0.6</td><td>no</td><td>complete              yes</td></tr>
+<tr><td>HD1.2</td><td>BIG-IP</td><td class="num">17.5.1.9</td><td class="num">0.0.12</td><td>yes</td><td>complete              yes</td></tr>
+</tbody></table>
+</details>
+<details id="check-4" open><summary>Check Largest files in /shared</summary>
+<table class="meta">
+<tr><th>Reference:</th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th>Command:</th><td><code>find /shared/ -xdev -type f -printf '%s %p\n' | sort -rn | head -n 15</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th class="num">Size</th><th>Path</th></tr></thead><tbody>
+<tr><td class="num">3.2GB</td><td>/shared/images/BIGIP-17.5.1.9-0.0.12.iso</td></tr>
+<tr><td class="num">9.0MB</td><td>/shared/rrd.1.2.perm/blade0cpu</td></tr>
+<tr><td class="num">7.8MB</td><td>/shared/tmp/f5-iappslx-ssl-orchestrator-17.5.1-12.4.2.noarch.rpm</td></tr>
+<tr><td class="num">7.0MB</td><td>/shared/tmp/restnoded.out</td></tr>
+<tr><td class="num">6.2MB</td><td>/shared/rrd.1.2.perm/endpisession</td></tr>
+<tr><td class="num">5.9MB</td><td>/shared/bin/big3d</td></tr>
+<tr><td class="num">3.6MB</td><td>/shared/rrd.1.2.perm/throughput</td></tr>
+<tr><td class="num">3.4MB</td><td>/shared/rrd.backup/throughput</td></tr>
+<tr><td class="num">3.4MB</td><td>/shared/rrd.1.2.perm/access</td></tr>
+<tr><td class="num">3.1MB</td><td>/shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-02T17:00:00</td></tr>
+<tr><td class="num">3.0MB</td><td>/shared/tmp/packages/icrd.pkc</td></tr>
+<tr><td class="num">2.9MB</td><td>/shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-02T18:00:00</td></tr>
+<tr><td class="num">2.8MB</td><td>/shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-03T14:00:00</td></tr>
+<tr><td class="num">2.8MB</td><td>/shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-03T13:00:00</td></tr>
+<tr><td class="num">2.8MB</td><td>/shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-03T12:00:00</td></tr>
+</tbody></table>
+</details>
+<details id="check-5" open><summary>Check Largest files in /var</summary>
+<table class="meta">
+<tr><th>Reference:</th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th>Command:</th><td><code>find /var/ -xdev -type f -printf '%s %p\n' | sort -rn | head -n 15</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th class="num">Size</th><th>Path</th></tr></thead><tbody>
+<tr><td class="num">129MB</td><td>/var/local/ucs/config.ucs</td></tr>
+<tr><td class="num">40MB</td><td>/var/lib/rpm/Packages</td></tr>
+<tr><td class="num">39MB</td><td>/var/apm/www/webtop/public/download/mac_oesisInspector.tar</td></tr>
+<tr><td class="num">32MB</td><td>/var/apm/www/webtop/public/download/linux_oesisInspector.tar</td></tr>
+<tr><td class="num">31MB</td><td>/var/local/pem/dtos/tacdb.bin</td></tr>
+<tr><td class="num">20MB</td><td>/var/db/mcpdb.bin</td></tr>
+<tr><td class="num">20MB</td><td>/var/IpRep/F5IpRep.dat</td></tr>
+<tr><td class="num">16MB</td><td>/var/local/pgsql/data/pg_wal/000000010000000000000004</td></tr>
+<tr><td class="num">16MB</td><td>/var/local/pgsql/data/pg_wal/000000010000000000000003</td></tr>
+<tr><td class="num">12MB</td><td>/var/apm/www/webtop/public/download/OesisInspector.cab</td></tr>
+<tr><td class="num">11MB</td><td>/var/apm/f5-iappslx-agc-usecase-pack/f5-iappslx-agc-usecase-pack-10.0-0.0.1657.tar.gz</td></tr>
+<tr><td class="num">8.7MB</td><td>/var/ts/bloom/bloom_credentials_blob.dat</td></tr>
+<tr><td class="num">7.8MB</td><td>/var/config/rest/downloads/f5-iappslx-ssl-orchestrator-17.5.1-12.4.2.noarch.rpm</td></tr>
+<tr><td class="num">5.8MB</td><td>/var/config/rest/iapps/f5-iappslx-ssl-orchestrator/presentation/sgc/gui-lib/js/vendor-patched.js</td></tr>
+<tr><td class="num">5.7MB</td><td>/var/cache/tomcat/webapps/Live_Update/WEB-INF/lib/schema.jar</td></tr>
+</tbody></table>
+</details>
+<details id="check-6" open><summary>Check Largest files in /var/log</summary>
+<table class="meta">
+<tr><th>References:</th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th></th><td><a href="https://my.f5.com/manage/s/article/K41517018">/var is nearly full, /var/log is not in /var (K41517018)</a></td></tr>
+<tr><th>Command:</th><td><code>find /var/log/ -xdev -type f -printf '%s %p\n' | sort -rn | head -n 15</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th class="num">Size</th><th>Path</th></tr></thead><tbody>
+<tr><td class="num">8.1MB</td><td>/var/log/auditd/audit.log.3</td></tr>
+<tr><td class="num">8.1MB</td><td>/var/log/auditd/audit.log.2</td></tr>
+<tr><td class="num">8.1MB</td><td>/var/log/auditd/audit.log.4</td></tr>
+<tr><td class="num">8.1MB</td><td>/var/log/auditd/audit.log.1</td></tr>
+<tr><td class="num">7.4MB</td><td>/var/log/auditd/audit.log</td></tr>
+<tr><td class="num">5.2MB</td><td>/var/log/tomcat/liveupdate.log</td></tr>
+<tr><td class="num">4.8MB</td><td>/var/log/cloud-init.log</td></tr>
+<tr><td class="num">4.1MB</td><td>/var/log/bootchart/bootchart.tgz</td></tr>
+<tr><td class="num">4.0MB</td><td>/var/log/journal/c027918341c54db585f5e74f670ba320/system.journal</td></tr>
+<tr><td class="num">4.0MB</td><td>/var/log/journal/c027918341c54db585f5e74f670ba320/system@a98bef33380e42a9b0b81d50712202e5-0000000000030f40-00065aeba6b1eb3a.journal</td></tr>
+<tr><td class="num">4.0MB</td><td>/var/log/journal/c027918341c54db585f5e74f670ba320/system@a98bef33380e42a9b0b81d50712202e5-0000000000030327-00065ae9b55ecaee.journal</td></tr>
+<tr><td class="num">4.0MB</td><td>/var/log/journal/c027918341c54db585f5e74f670ba320/system@a98bef33380e42a9b0b81d50712202e5-000000000002f9eb-00065ae927c252de.journal</td></tr>
+<tr><td class="num">4.0MB</td><td>/var/log/journal/c027918341c54db585f5e74f670ba320/system@a98bef33380e42a9b0b81d50712202e5-000000000002f0f1-00065ae862f1e941.journal</td></tr>
+<tr><td class="num">2.1MB</td><td>/var/log/audit</td></tr>
+<tr><td class="num">1.5MB</td><td>/var/log/sa6/saxml.1</td></tr>
+</tbody></table>
+</details>
+<details id="check-7" open><summary>Check Deleted files still held open</summary>
+<table class="meta">
+<tr><th>References:</th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th></th><td><a href="https://my.f5.com/manage/s/article/K000136089">No space left on /var partition even after removing large files (K000136089)</a></td></tr>
+<tr><th>Command:</th><td><code>lsof -nP +L1</code></td></tr>
+</table>
+<p class="empty">None found</p>
+</details>
+<details id="check-8" open><summary>Check ISO images in /shared/images</summary>
+<table class="meta">
+<tr><th>Reference:</th><td><a href="https://my.f5.com/manage/s/article/K34745165">Managing software images on the BIG-IP system (K34745165)</a></td></tr>
+<tr><th>Command:</th><td><code>find /shared/images -maxdepth 2 -type f -name '*.iso'</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th class="num">Size</th><th>Path</th><th>Status</th></tr></thead><tbody>
+<tr><td class="num">3.2GB</td><td>/shared/images/BIGIP-17.5.1.9-0.0.12.iso</td><td>running version</td></tr>
+</tbody></table>
+</details>
+<details id="check-9" open><summary>Check EPSEC (APM Endpoint Security) packages</summary>
+<table class="meta">
+<tr><th>References:</th><td><a href="https://my.f5.com/manage/s/article/K21175584">Removing unnecessary OPSWAT EPSEC packages from the BIG-IP APM system (K21175584)</a></td></tr>
+<tr><th></th><td><a href="https://my.f5.com/manage/s/article/K000092603">Multiple EPSEC iso files in the system /config/filestore/files_d/Common_d/epsec_package_d/ (K000092603)</a></td></tr>
+<tr><th>Commands:</th><td><code>find /shared/apm/images /config/filestore/files_d/*_d/epsec_package_d -maxdepth 1 -type f -name '*epsec*'</code></td></tr>
+<tr><th></th><td><code>tmsh list apm epsec epsec-package one-line</code></td></tr>
+<tr><th></th><td><code>tmsh show apm epsec software-status</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th>Package</th><th class="num">Size</th><th>Date</th><th>Location</th><th>Registered</th><th>System package</th><th>Active</th></tr></thead><tbody>
+<tr><td>epsec-1.0.0-2007.0.iso</td><td class="num">175MB</td><td>2026-08-24 09:57</td><td>filestore</td><td>yes</td><td>true</td><td>yes</td></tr>
+</tbody></table>
+</details>
+<details id="check-10" open><summary>Check UCS configuration archives</summary>
+<table class="meta">
+<tr><th>References:</th><td><a href="https://my.f5.com/manage/s/article/K13132">Backing up and restoring BIG-IP configuration files with a UCS archive (K13132)</a></td></tr>
+<tr><th></th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th>Command:</th><td><code>find /var/local/ucs /shared/tmp /var/tmp /config /root /home -xdev -type f -name '*.ucs'</code></td></tr>
+</table>
+<table class="data">
+<thead><tr><th class="num">Size</th><th>Modified</th><th>Path</th></tr></thead><tbody>
+<tr class="group"><td colspan="3">/var/local/ucs</td></tr>
+<tr><td class="num">129MB</td><td>2026-09-02 15:28</td><td>/var/local/ucs/config.ucs</td></tr>
+</tbody></table>
+</details>
+<details id="check-11" open><summary>Check Maintenance files</summary>
+<table class="meta">
+<tr><th>Reference:</th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th>Command:</th><td><code>find /shared/tmp /var/tmp /var/core /shared/core -xdev -type f \( -name 'qkview-*' -o -name '*.qkview' -o -name '*.tar.gz' -o -name 'core.*' -o -name '*.core' -o -name '*.core.gz' \)</code></td></tr>
+</table>
+<p class="empty">None found</p>
+</details>
+<details id="check-12" open><summary>Check Packet capture files</summary>
+<table class="meta">
+<tr><th>Reference:</th><td><a href="https://my.f5.com/manage/s/article/K14403">Maintaining disk space on the BIG-IP system (K14403)</a></td></tr>
+<tr><th>Command:</th><td><code>find /shared/tmp /var/tmp /tmp /root /home /config /var/log/tcpdump -xdev -type f \( -name '*.pcap' -o -name '*.cap' -o -name '*.pcapng' \)</code></td></tr>
+</table>
+<p class="empty">None found</p>
+</details>
+</main>
+<footer>End of report &middot; 12 checks completed &middot; 2026-09-07 18:50:58 EDT</footer>
+</div>
+</body>
+</html>
