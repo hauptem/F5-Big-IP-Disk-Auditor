@@ -60,8 +60,9 @@ while [[ $# -gt 0 ]]; do
             fi ;;
         -y|--yes|--noconfirm) AUTO_YES=1; shift ;;
         -h|--help)
-            # header block: line 3 through the line before the closing banner
-            sed -n '3,/^####/{/^####/!p}' "$0" | sed 's/^# \?//'
+            # header block: comment lines from line 3 to the first blank line,
+            # banner rules omitted
+            awk 'NR >= 3 && !/^#/ {exit} NR >= 3 && !/^# ===/ {sub(/^# ?/, ""); print}' "$0"
             exit 0 ;;
         *) echo "Unknown option: $1" >&2; exit 2 ;;
     esac
@@ -469,19 +470,30 @@ report_boot_volumes() {
     cmd "tmsh show sys software status"
     emit ""
     command -v tmsh >/dev/null 2>&1 || { t_empty "tmsh not available"; return; }
-    local out rows=0
+    local out
     out=$(tmsh show sys software status 2>/dev/null)
     [[ -n "$out" ]] || { t_empty "No output"; return; }
-    t_head "$(printf '%-8s %-8s %-10s %-8s %-7s %s' Volume Product Version Build Active Status)" \
-           "Volume" "Product" "Version" "Build" "Active" "Status"
-    # Data rows start with a volume name such as HD1.1 or MD1.2 and have at
-    # least six fields. Everything after Active is kept as Status so that
-    # rows with extra trailing fields, such as an install percentage, parse.
-    local vol prod ver build active status
-    while read -r vol prod ver build active status; do
-        [[ -n "$active" && "$vol" =~ ^[A-Z]+[0-9]+\.[0-9]+$ ]] || continue
-        t_row "$(printf '%-8s %-8s %-10s %-8s %-7s %s' "$vol" "$prod" "$ver" "$build" "$active" "$status")" \
-              "$vol" "$prod" "$ver" "$build" "$active" "$status"
+    # Column names come from the header row tmsh prints, so releases that add
+    # columns after Status render them rather than folding them into Status.
+    local -a cols=() f
+    read -r -a cols <<< "$(awk '$1 == "Volume" {print; exit}' <<< "$out")"
+    (( ${#cols[@]} >= 6 )) || cols=(Volume Product Version Build Active Status)
+    local fmt="" c w t
+    for c in "${cols[@]}"; do w=${#c}; (( w < 8 )) && w=8; fmt+="%-${w}s  "; done
+    # shellcheck disable=SC2059
+    t=$(printf "$fmt" "${cols[@]}"); t_head "${t%"${t##*[^ ]}"}" "${cols[@]}"
+    local rows=0 line
+    local n=${#cols[@]}
+    while IFS= read -r line; do
+        read -r -a f <<< "$line"
+        [[ ${#f[@]} -ge 6 && "${f[0]}" =~ ^[A-Z]+[0-9]+\.[0-9]+$ ]] || continue
+        # fields beyond the header count are folded into the last column
+        if (( ${#f[@]} > n )); then
+            f[n-1]="${f[*]:n-1}"; f=("${f[@]:0:n}")
+        fi
+        while (( ${#f[@]} < n )); do f+=(""); done
+        # shellcheck disable=SC2059
+        t=$(printf "$fmt" "${f[@]}"); t_row "${t%"${t##*[^ ]}"}" "${f[@]}"
         rows=$((rows+1))
     done <<< "$out"
     (( rows == 0 )) && t_empty "No volumes parsed from tmsh output"
