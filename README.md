@@ -1,6 +1,6 @@
 # F5 BIG-IP Disk Auditor
 
-Read-only disk space report for BIG-IP. Twelve checks covering partition and inode usage, boot volumes, largest files per volume, deleted files still held open, and removable ISO, EPSEC, UCS, qkview, core and pcap files. 
+Read-only disk space report for BIG-IP. Thirteen checks covering partition and inode usage, boot volumes, largest files per volume, deleted files still held open, ASM policy history files, and removable ISO, EPSEC, UCS, qkview, core and pcap files. 
 
 ## Usage
 
@@ -30,6 +30,8 @@ Run as an Administrator with Advanced Shell access.
 - [K21175584: Removing unnecessary OPSWAT EPSEC packages from the BIG-IP APM system](https://my.f5.com/manage/s/article/K21175584)
 - [K000092603: Multiple EPSEC iso files in the system /config/filestore/files_d/Common_d/epsec_package_d/](https://my.f5.com/manage/s/article/K000092603)
 - [K13132: Backing up and restoring BIG-IP configuration files with a UCS archive](https://my.f5.com/manage/s/article/K13132)
+- [K15125052: Huge UCS backup file due to /var/ts/dms/policy/policy_versions](https://my.f5.com/manage/s/article/K15125052)
+- [K000151714: UCS backup failed due to /var/ts/dms/policy/policy_versions](https://my.f5.com/manage/s/article/K000151714)
 
 ## License
 
