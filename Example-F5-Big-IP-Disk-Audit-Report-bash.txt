@@ -1,0 +1,211 @@
+[root@bigip175-1:Active:Standalone] tmp # ./F5-Big-IP-Disk-Audit.sh -y
+F5 BIG-IP Disk Audit Report
+===============================================================================================
+Host:     bigip175-1.lab.local
+Version:  17.5.1.9
+Date:     2026-09-24 17:51:09 EDT
+
+Check Partition free space
+-----------------------------------------------------------------------------------------------
+  References:  Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+               The /usr partition shows high disk space usage (K23607394)
+               https://my.f5.com/manage/s/article/K23607394
+  Command:     df -hP
+
+  Filesystem                             Size  Used Avail Use% Mounted on
+  /dev/mapper/vg--db--vda-set.1.root     419M   88M  305M  23% /
+  /dev/mapper/vg--db--vda-set.1._config  2.1G  241M  1.8G  13% /config
+  /dev/mapper/vg--db--vda-set.1._usr     7.9G  5.8G  1.7G  78% /usr
+  /dev/mapper/vg--db--vda-set.1._var     4.4G  722M  3.4G  18% /var
+  /dev/mapper/vg--db--vda-dat.share       15G  3.3G   11G  24% /shared
+  /dev/mapper/vg--db--vda-dat.log        2.9G  120M  2.6G   5% /var/log
+
+Check Inode usage
+-----------------------------------------------------------------------------------------------
+  Reference:   Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+  Commands:    df -iP
+               find /var -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -nr | head -n 15
+
+  Filesystem                             Inodes  IUsed   IFree IUse% Mounted on
+  /dev/mapper/vg--db--vda-set.1.root     112640   4236  108404    4% /
+  /dev/mapper/vg--db--vda-set.1._config  142272    781  141491    1% /config
+  /dev/mapper/vg--db--vda-set.1._usr     529360 100402  428958   19% /usr
+  /dev/mapper/vg--db--vda-set.1._var     294912  12324  282588    5% /var
+  /dev/mapper/vg--db--vda-dat.share      983040    621  982419    1% /shared
+  /dev/mapper/vg--db--vda-dat.log        192000    418  191582    1% /var/log
+
+      Files  Directory
+        788  /var/ts/var/install/ts_db.save_dir_16865.cstmp
+        341  /var/ts/dms/help/tsui/en/policy
+        272  /var/sam/www/admin/vpe2/private/xml/help
+        250  /var/ts/dms/images/flags
+        168  /var/ts/dms/policy
+        164  /var/ts/dms/policy/templates
+        138  /var/ts/files/site_1/config/013/full
+        138  /var/ts/files/site_1/config/012/full
+        111  /var/sam/www/webtop/public/download
+        108  /var/ts/dms/images
+        104  /var/service
+        103  /var/ts/dms/policy/templates/angular/request/violations
+         95  /var/sam/www/admin/vpe2/private/xml/agentProperties
+         94  /var/ts/dms/server_technologies_logos
+         86  /var/ts/dms/skins/skin/images
+
+Check Boot location volumes
+-----------------------------------------------------------------------------------------------
+  Reference:   Deleting a boot location volume to free up disk space (K33265170)
+               https://my.f5.com/manage/s/article/K33265170
+  Command:     tmsh show sys software status
+
+  Volume    Product   Version   Build     Active    Status    Allowed   Version
+  HD1.1     BIG-IP    17.5.1.9  0.0.12    yes       complete  yes
+  HD1.2     BIG-IP    17.5.1.8  0.0.19    no        complete  yes
+
+Check Largest files in /shared
+-----------------------------------------------------------------------------------------------
+  Reference:   Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+  Command:     find /shared/ -xdev -type f -printf '%s %p\n' | sort -rn | head -n 15
+
+       Size  Path
+      3.2GB  /shared/images/BIGIP-17.5.1.9-0.0.12.iso
+      9.0MB  /shared/rrd.1.2.perm/blade0cpu
+      6.2MB  /shared/rrd.1.2.perm/endpisession
+      5.9MB  /shared/bin/big3d
+      3.6MB  /shared/rrd.1.2.perm/throughput
+      3.4MB  /shared/rrd.1.2.perm/access
+      3.0MB  /shared/tmp/packages/icrd.pkc
+      2.7MB  /shared/rrd.1.2.perm/memory
+      2.6MB  /shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-18T17:00:00
+      2.6MB  /shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-17T19:00:00
+      2.6MB  /shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-17T16:00:00
+      2.6MB  /shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-17T15:00:00
+      2.6MB  /shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-06T11:00:00
+      2.6MB  /shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-06T17:00:00
+      2.6MB  /shared/tmstat/snapshots/blade0/public/3600/blade0-public-3600-2026-09-05T13:00:00
+
+Check Largest files in /var
+-----------------------------------------------------------------------------------------------
+  Reference:   Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+  Command:     find /var/ -xdev -type f -printf '%s %p\n' | sort -rn | head -n 15
+
+       Size  Path
+      146MB  /var/local/ucs/config.ucs
+       40MB  /var/lib/rpm/Packages
+       39MB  /var/apm/www/webtop/public/download/mac_oesisInspector.tar
+       32MB  /var/apm/www/webtop/public/download/linux_oesisInspector.tar
+       31MB  /var/local/pem/dtos/tacdb.bin
+       22MB  /var/db/mcpdb.bin
+       20MB  /var/ts/var/install/ts_db.save_dir_16865.cstmp/ts_db.data.PLC.NEGSIG_SIGNATURES.cstmp
+       18MB  /var/ts/install/plc.sql
+       12MB  /var/apm/www/webtop/public/download/OesisInspector.cab
+       11MB  /var/apm/f5-iappslx-agc-usecase-pack/f5-iappslx-agc-usecase-pack-10.0-0.0.1657.tar.gz
+      8.7MB  /var/ts/bloom/bloom_credentials_blob.dat
+      5.7MB  /var/cache/tomcat/webapps/Live_Update/WEB-INF/lib/schema.jar
+      4.3MB  /var/lib/rpm/Basenames
+      4.0MB  /var/fslog/tmp/260924-172049-004.log
+      3.9MB  /var/lib/hsqldb/live-update/update-files/BrowserChallenges_20260824_071143.im
+
+Check Largest files in /var/log
+-----------------------------------------------------------------------------------------------
+  References:  Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+               /var is nearly full, /var/log is not in /var (K41517018)
+               https://my.f5.com/manage/s/article/K41517018
+  Command:     find /var/log/ -xdev -type f -printf '%s %p\n' | sort -rn | head -n 15
+
+       Size  Path
+      8.1MB  /var/log/auditd/audit.log.1
+      6.2MB  /var/log/auditd/audit.log
+      4.0MB  /var/log/journal/a582e4cf74094e4ba2caad0cc95f8a46/system.journal
+      4.0MB  /var/log/journal/a582e4cf74094e4ba2caad0cc95f8a46/system@cc5b3935e19e4a989bdc6eea5da61d1d-000000000001575a-00065c412259128b.journal
+      4.0MB  /var/log/journal/a582e4cf74094e4ba2caad0cc95f8a46/system@cc5b3935e19e4a989bdc6eea5da61d1d-00000000000149b1-00065bd6daa4c548.journal
+      4.0MB  /var/log/journal/a582e4cf74094e4ba2caad0cc95f8a46/system@cc5b3935e19e4a989bdc6eea5da61d1d-00000000000140bf-00065bd6ca1188f9.journal
+      4.0MB  /var/log/journal/a582e4cf74094e4ba2caad0cc95f8a46/system@cc5b3935e19e4a989bdc6eea5da61d1d-0000000000013250-00065bc81a16ada6.journal
+      3.6MB  /var/log/tomcat/liveupdate.log
+      2.6MB  /var/log/datasync/datasyncd.log
+      2.6MB  /var/log/avr/avrd.log
+      2.6MB  /var/log/avr/monpd.log
+      2.1MB  /var/log/cloud-init.log
+      1.9MB  /var/log/ts/bd.log
+      1.4MB  /var/log/adm/admd.log
+      1.4MB  /var/log/bootchart/bootchart.tgz
+
+Check Deleted files still held open
+-----------------------------------------------------------------------------------------------
+  References:  Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+               No space left on /var partition even after removing large files (K000136089)
+               https://my.f5.com/manage/s/article/K000136089
+  Command:     lsof -nP +L1
+
+  None found
+
+Check ISO images in /shared/images
+-----------------------------------------------------------------------------------------------
+  Reference:   Managing software images on the BIG-IP system (K34745165)
+               https://my.f5.com/manage/s/article/K34745165
+  Command:     find /shared/images -maxdepth 2 -type f -name '*.iso'
+
+       Size  Path
+      3.2GB  /shared/images/BIGIP-17.5.1.9-0.0.12.iso  <-- running version
+
+Check EPSEC (APM Endpoint Security) packages
+-----------------------------------------------------------------------------------------------
+  References:  Removing unnecessary OPSWAT EPSEC packages from the BIG-IP APM system (K21175584)
+               https://my.f5.com/manage/s/article/K21175584
+               Multiple EPSEC iso files in the system /config/filestore/files_d/Common_d/epsec_package_d/ (K000092603)
+               https://my.f5.com/manage/s/article/K000092603
+  Commands:    find /shared/apm/images /config/filestore/files_d/*_d/epsec_package_d -maxdepth 1 -type f -name '*epsec*'
+               tmsh list apm epsec epsec-package one-line
+               tmsh show apm epsec software-status
+
+  Package                           Size  Date              Location          Registered  SystemPkg   Active
+  epsec-1.0.0-2007.0.iso           175MB  2026-07-14 04:58  filestore         yes         true        yes
+
+Check UCS configuration archives
+-----------------------------------------------------------------------------------------------
+  References:  Backing up and restoring BIG-IP configuration files with a UCS archive (K13132)
+               https://my.f5.com/manage/s/article/K13132
+               Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+  Command:     find /var/local/ucs /shared/tmp /var/tmp /config /root /home -xdev -type f -name '*.ucs'
+
+  /var/local/ucs
+         Size  Modified          Path
+        146MB  2026-09-06 11:01  /var/local/ucs/config.ucs
+
+Check ASM policy history files
+-----------------------------------------------------------------------------------------------
+  References:  Huge UCS backup file due to /var/ts/dms/policy/policy_versions (K15125052)
+               https://my.f5.com/manage/s/article/K15125052
+               UCS backup failed due to /var/ts/dms/policy/policy_versions (K000151714)
+               https://my.f5.com/manage/s/article/K000151714
+  Command:     find /var/ts/dms/policy/policy_versions/ -type f -name '*.plc' -printf '%s\n' | awk '$1 > max {max = $1} {n++; sum += $1} END {if (n) printf ".plc Files: %d\nTotal Size: %.2f MB\nLargest: %.2f MB (%d bytes)\n", n, sum/1e6, max/1e6, max; else print "No .plc files found"}'
+
+  /var/ts/dms/policy/policy_versions
+    .plc Files  Total Size   Largest
+             3  0.96 MB      0.32 MB (319945 bytes)
+
+Check Maintenance files
+-----------------------------------------------------------------------------------------------
+  Reference:   Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+  Command:     find /shared/tmp /var/tmp /var/core /shared/core -xdev -type f \( -name 'qkview-*' -o -name '*.qkview' -o -name '*.tar.gz' -o -name 'core.*' -o -name '*.core' -o -name '*.core.gz' \)
+
+  None found
+
+Check Packet capture files
+-----------------------------------------------------------------------------------------------
+  Reference:   Maintaining disk space on the BIG-IP system (K14403)
+               https://my.f5.com/manage/s/article/K14403
+  Command:     find /shared/tmp /var/tmp /tmp /root /home /config /var/log/tcpdump -xdev -type f \( -name '*.pcap' -o -name '*.cap' -o -name '*.pcapng' \)
+
+  None found
+
+===============================================================================================
+End of report  13 checks completed  2026-09-24 17:51:10 EDT
+===============================================================================================

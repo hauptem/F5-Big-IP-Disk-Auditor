@@ -2,7 +2,7 @@
 # =============================================================================
 # F5-Big-IP-Disk-Auditor
 # =============================================================================
-# Version: 1.0
+# Version: 1.1
 # Author: Eric Haupt
 # Released under the MIT License. See LICENSE file for details.
 # https://github.com/hauptem/F5-Big-IP-Disk-Auditor
@@ -22,6 +22,9 @@
 
 set -u
 
+# Script version, shown in the HTML report title bar
+SCRIPT_VERSION="1.1"
+
 #=============================================================================
 # Configuration
 #=============================================================================
@@ -36,6 +39,7 @@ TOP_N=${TOP_N:-15}
 RULE_WIDTH=95
 EPSEC_IMAGE_DIR="/shared/apm/images"
 EPSEC_FILESTORE_GLOB="/config/filestore/files_d/*_d/epsec_package_d"
+ASM_POLICY_DIR="/var/ts/dms/policy/policy_versions"
 
 #=============================================================================
 # Argument parsing
@@ -162,6 +166,8 @@ declare -A KB=(
     [K41517018]="/var is nearly full, /var/log is not in /var"
     [K000092603]="Multiple EPSEC iso files in the system /config/filestore/files_d/Common_d/epsec_package_d/"
     [K000136089]="No space left on /var partition even after removing large files"
+    [K15125052]="Huge UCS backup file due to /var/ts/dms/policy/policy_versions"
+    [K000151714]="UCS backup failed due to /var/ts/dms/policy/policy_versions"
 )
 # ref <Knumber>...: article title with K number and URL; rendered as a link
 # in HTML
@@ -191,7 +197,7 @@ cmd() {
 # table.
 #   t_head  <text-line> <col>...   column headings
 #   t_row   <text-line> <cell>...  one row; numeric cells are right-aligned
-#   t_group <name>                 group label spanning the table
+#   t_group <name>                 location label above the table that follows
 #   t_empty <message>              empty-result message
 result() { emit "  $*"; }
 label()  { emit "  ${C_BLD}$*${C_RST}"; }
@@ -211,7 +217,7 @@ t_head() {
     local c cls
     for c in "$@"; do
         cls=""
-        case "$c" in Size|Used|Avail|Use%|Inodes|IUsed|IFree|IUse%|Version|Build|Files|PID) cls=' class="num"' ;; esac
+        case "$c" in Size|Used|Avail|Use%|Inodes|IUsed|IFree|IUse%|Version|Build|Files|'.plc Files'|PID) cls=' class="num"' ;; esac
         HTML+="<th${cls}>$(html_esc "$c")</th>"
     done
     HTML+='</tr></thead><tbody>'$'\n'
@@ -230,8 +236,8 @@ t_row() {
 t_group() {
     label "$1"
     [[ -n "$HTML_FILE" ]] || return 0
-    html_open table
-    HTML+="<tr class=\"group\"><td colspan=\"${TABLE_COLS:-1}\">$(html_esc "$1")</td></tr>"$'\n'
+    html_open none
+    HTML+="<p class=\"group\">$(html_esc "$1")</p>"$'\n'
 }
 
 t_empty() {
@@ -347,11 +353,11 @@ html_begin() {
   :root { --pad:32px; --mono:Consolas,"Cascadia Mono",Menlo,"DejaVu Sans Mono","Liberation Mono","Courier New",monospace; }
   html { scrollbar-gutter:stable; }
   @supports not (scrollbar-gutter:stable) { html { overflow-y:scroll; } }
-  body { margin:0; background:#c4c3bf; color:#222; font:15px/1.5 "Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  body { margin:0; background:#4d4b48; color:#222; font:15px/1.5 "Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
   .wrap { max-width:1700px; margin:0 auto; padding:0 var(--pad); }
-  header { height:40px; color:#dce0e4; background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0) 0,rgba(255,255,255,.05) 2px,rgba(255,255,255,0) 4px),linear-gradient(#515b67,#768696); border-bottom:1px solid #5c5c5c; }
+  header { height:40px; color:#fff; background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0) 0,rgba(255,255,255,.05) 2px,rgba(255,255,255,0) 4px),linear-gradient(#515b67,#768696); border-bottom:1px solid #5c5c5c; }
   header .wrap { padding:7px 0 0 39px; }
-  h1 { margin:0; font-size:22px; font-weight:400; line-height:1.2; color:#dce0e4; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; }
+  h1 { margin:0; font-size:22px; font-weight:400; line-height:1.2; color:#fff; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; }
   .run { display:inline-flex; align-items:flex-end; gap:40px; margin:12px 0; padding:8px 14px; font-size:14px; background:#fff; border:1px solid #a8a5a0; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,.14); }
   .run dl { display:grid; grid-template-columns:max-content 1fr; gap:0 14px; margin:0; }
   .run dt { color:#444; } .run dd { margin:0; }
@@ -368,7 +374,7 @@ html_begin() {
   table.meta tr:first-child th, table.meta tr:first-child td { padding-top:4px; }
   table.meta tr:last-child th, table.meta tr:last-child td { padding-bottom:4px; }
   a { color:#2a4e73; }
-  code { font-family:var(--mono); font-size:13px; color:#333; white-space:pre; }
+  code { font-family:var(--mono); font-size:13px; color:#333; white-space:pre-wrap; overflow-wrap:anywhere; }
   table.data { border-collapse:collapse; width:auto; margin:0 12px 8px; font-size:13.5px; font-family:var(--mono); }
   table.data th { text-align:left; font-weight:600; padding:0 16px 0 0; border-bottom:1px solid #cfd6de; white-space:nowrap; color:#555; }
   table.data td { padding:0 16px 0 0; vertical-align:top; white-space:nowrap; line-height:1.35; }
@@ -376,16 +382,16 @@ html_begin() {
   table.data tbody tr:first-child td { padding-top:1px; }
   table.data td:last-child { white-space:normal; overflow-wrap:anywhere; }
   table.data td.num, table.data th.num { text-align:right; }
-  table.data tr.group td { padding-top:6px; font-weight:600; color:#333; }
+  p.group { margin:0 12px 2px; font-family:var(--mono); font-size:13.5px; font-weight:600; color:#333; }
   table.data tr.empty td, p.empty { color:#222; }
   p.empty { margin:0 12px 8px; font-family:var(--mono); font-size:13.5px; }
-  footer { margin:8px 0 16px; padding:6px 0; border-top:1px solid #a8a5a0; color:#222; font-size:13px; }
-  @media print { body { background:#fff; } .wrap { max-width:none; padding:0 8px; } details { break-inside:avoid; border-color:#999; box-shadow:none; } .run { box-shadow:none; } header, summary, table.meta { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+  footer { margin:8px 0 16px; padding:6px 0; color:#fff; font-size:15px; }
+  @media print { body { background:#fff; } footer { color:#222; } .wrap { max-width:none; padding:0 8px; } details { break-inside:avoid; border-color:#999; box-shadow:none; } .run { box-shadow:none; } header, summary, table.meta { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
 </style>
 </head>
 <body>
 <header><div class="wrap">
-<h1>F5 BIG-IP Disk Audit Report</h1>
+<h1>F5 BIG-IP Disk Audit v$(html_esc "$SCRIPT_VERSION") Report</h1>
 </div></header>
 <div class="wrap">
 <div class="run">
@@ -627,12 +633,16 @@ scan_by_glob() {
         found+="$dir"$'\n'"$matches"$'\n'$'\x1f'$'\n'
     done
     [[ -n "$found" ]] || { t_empty "None found"; return; }
-    t_head "$(printf '  %9s  %-16s  %s' Size Modified Path)" "Size" "Modified" "Path"
     local group=1
     while IFS= read -r m; do
         if [[ "$m" == $'\x1f' ]]; then group=1; continue; fi
         [[ -n "$m" ]] || continue
-        if (( group )); then t_group "$m"; group=0; continue; fi
+        # Each directory gets its own location label and table
+        if (( group )); then
+            t_group "$m"
+            t_head "$(printf '  %9s  %-16s  %s' Size Modified Path)" "Size" "Modified" "Path"
+            group=0; continue
+        fi
         read -r sz dp tp path <<< "$m"
         sz=$(human_bytes "$sz")
         t_row "$(printf '  %9s  %s %s  %s' "$sz" "$dp" "$tp" "$path")" "$sz" "$dp $tp" "$path"
@@ -645,6 +655,35 @@ report_ucs_files() {
     cmd "find ${UCS_SCAN_DIRS[*]} -xdev -type f -name '*.ucs'"
     emit ""
     scan_by_glob -name '*.ucs' -- "${UCS_SCAN_DIRS[@]}"
+}
+
+# ASM saves a binary copy (.plc) of a security policy each time it is applied,
+# in one subdirectory per policy ID. Every copy is carried into the UCS
+# archive. Sizes are decimal MB (1 MB = 1,000,000 bytes).
+report_asm_policy_history() {
+    # The awk program is shared by the displayed command and the executed one
+    local prog='$1 > max {max = $1} {n++; sum += $1} END {if (n) printf ".plc Files: %d\nTotal Size: %.2f MB\nLargest: %.2f MB (%d bytes)\n", n, sum/1e6, max/1e6, max; else print "No .plc files found"}'
+    header "ASM policy history files"
+    ref K15125052 K000151714
+    cmd "find $ASM_POLICY_DIR/ -type f -name '*.plc' -printf '%s\\n' | awk '$prog'"
+    emit ""
+    [[ -d "$ASM_POLICY_DIR" ]] || { t_empty "$ASM_POLICY_DIR not present"; return; }
+    # Output is "Key: value" lines, or the single line "No .plc files found"
+    local line files="" total="" largest=""
+    while IFS= read -r line; do
+        case "$line" in
+            '.plc Files:'*) files=${line#*: } ;;
+            'Total Size:'*) total=${line#*: } ;;
+            Largest:*)      largest=${line#*: } ;;
+        esac
+    done < <(find "$ASM_POLICY_DIR/" -type f -name '*.plc' -printf '%s\n' 2>/dev/null | awk "$prog")
+    [[ -n "$files" ]] || { t_empty "No .plc files found"; return; }
+    local fmt='  %10s  %-11s  %s'
+    t_group "$ASM_POLICY_DIR"
+    # shellcheck disable=SC2059
+    t_head "$(printf "$fmt" ".plc Files" "Total Size" Largest)" ".plc Files" "Total Size" "Largest"
+    # shellcheck disable=SC2059
+    t_row "$(printf "$fmt" "$files" "$total" "$largest")" "$files" "$total" "$largest"
 }
 
 report_old_maintenance_files() {
@@ -751,6 +790,7 @@ report_deleted_open_files
 report_iso_inventory
 report_epsec_images
 report_ucs_files
+report_asm_policy_history
 report_old_maintenance_files
 report_pcap_files
 
